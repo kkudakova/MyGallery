@@ -57,6 +57,7 @@ public class PageFragment extends Fragment {
             mImageNum = savedInstanceState.getString(IMAGE_DATA_EXTRA);
             if (mImageNum==null && i<((Gallery)getActivity()).mImageUrls.size()) {mImageNum = ((Gallery)getActivity()).mImageUrls.get(i); i++;}
         }
+        if (i==((Gallery)getActivity()).mImageUrls.size()) i=0;
         return v;
     }
 
