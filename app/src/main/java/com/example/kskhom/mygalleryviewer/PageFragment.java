@@ -13,6 +13,7 @@ import android.widget.ImageView;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * Created by kskhom on 03.08.2015.
@@ -22,6 +23,8 @@ public class PageFragment extends Fragment {
     static final int GALLERY_REQUEST = 1;
     private String mImageNum;
     private ImageView mImageView;
+    private final static ArrayList<String> mImageUrls = new ArrayList<String>();
+    private static int i=0;
 
 
     static PageFragment newInstance(String imageNum) {
@@ -40,7 +43,7 @@ public class PageFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        setRetainInstance(true);
         mImageNum = this.getArguments().getString(IMAGE_DATA_EXTRA);
     }
 
@@ -52,6 +55,7 @@ public class PageFragment extends Fragment {
         mImageView = (ImageView) v.findViewById(R.id.imagePage);
         if (savedInstanceState != null) {
             mImageNum = savedInstanceState.getString(IMAGE_DATA_EXTRA);
+            if (mImageNum==null && i<((Gallery)getActivity()).mImageUrls.size()) {mImageNum = ((Gallery)getActivity()).mImageUrls.get(i); i++;}
         }
         return v;
     }
@@ -70,7 +74,7 @@ public class PageFragment extends Fragment {
     public void onStart() {
         super.onStart();
         if (Gallery.class.isInstance(getActivity())) {
-           mImageView.setImageURI(Uri.parse(mImageNum));
+            mImageView.setImageURI(Uri.parse(mImageNum));
         }
     }
 
@@ -78,5 +82,22 @@ public class PageFragment extends Fragment {
     {
         super.onStop();
         mImageView.setImageURI(null);
+    }
+    public void onDestroy()
+    {
+        super.onDestroy();
+        final Bundle args = new Bundle();
+        args.putString(IMAGE_DATA_EXTRA, mImageNum);
+        this.setArguments(args);
+    }
+
+    public ArrayList<String> getMImageUrls()
+    {
+        return mImageUrls;
+    }
+
+    public void setMImageUrls(ArrayList<String> urls)
+    {
+        mImageUrls.addAll(urls);
     }
 }
