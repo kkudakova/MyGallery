@@ -1,13 +1,18 @@
 package com.example.kskhom.mygalleryviewer;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 /**
  * Created by kskhom on 03.08.2015.
@@ -15,14 +20,14 @@ import android.widget.ImageView;
 public class PageFragment extends Fragment {
     private static final String IMAGE_DATA_EXTRA = "resId";
     static final int GALLERY_REQUEST = 1;
-    private int mImageNum;
+    private String mImageNum;
     private ImageView mImageView;
 
 
-    static PageFragment newInstance(int imageNum) {
+    static PageFragment newInstance(String imageNum) {
         final PageFragment f = new PageFragment();
         final Bundle args = new Bundle();
-        args.putInt(IMAGE_DATA_EXTRA, imageNum);
+        args.putString(IMAGE_DATA_EXTRA, imageNum);
         f.setArguments(args);
         return f;
     }
@@ -36,7 +41,7 @@ public class PageFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        mImageNum = this.getArguments().getInt(IMAGE_DATA_EXTRA);
+        mImageNum = this.getArguments().getString(IMAGE_DATA_EXTRA);
     }
 
     @Override
@@ -46,7 +51,7 @@ public class PageFragment extends Fragment {
         final View v = inflater.inflate(R.layout.image_fragment, container, false);
         mImageView = (ImageView) v.findViewById(R.id.imagePage);
         if (savedInstanceState != null) {
-            mImageNum = savedInstanceState.getInt(IMAGE_DATA_EXTRA);
+            mImageNum = savedInstanceState.getString(IMAGE_DATA_EXTRA);
         }
         return v;
     }
@@ -55,13 +60,23 @@ public class PageFragment extends Fragment {
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (Gallery.class.isInstance(getActivity())) {
-            final Uri resId = Uri.parse(Gallery.mImageUrls.get(mImageNum));
-            // Call out to Gallery to load the bitmap in a background thread
-            ((Gallery) getActivity()).loadBitmap(resId, mImageView);
-        }
 //        Intent photoPickerIntent = new Intent(Intent.ACTION_PICK);
 //        photoPickerIntent.setType("image/*");
 //        getActivity().startActivityForResult(photoPickerIntent, GALLERY_REQUEST);
+    }
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (Gallery.class.isInstance(getActivity())) {
+           mImageView.setImageURI(Uri.parse(mImageNum));
+        }
+    }
+
+    public void onStop()
+    {
+        super.onStop();
+        mImageView.setImageURI(null);
     }
 }

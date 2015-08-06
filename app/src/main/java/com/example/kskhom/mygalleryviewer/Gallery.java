@@ -10,12 +10,15 @@ import android.provider.MediaStore;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageView;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 
 
@@ -61,14 +64,7 @@ public class Gallery extends FragmentActivity {
         mPager.setAdapter(mAdapter);
     }
 
-
-    public void loadBitmap(Uri resId, ImageView imageView) {
-        imageView.setImageURI(resId);
-        // BitmapWorkerTask task = new BitmapWorkerTask(imageView);
-        // task.execute(resId);
-    }
-
-    public static class ImagePagerAdapter extends FragmentStatePagerAdapter {
+    public static class ImagePagerAdapter extends FragmentPagerAdapter {
         private final int mSize;
 
         public ImagePagerAdapter(FragmentManager fm, int size) {
@@ -83,7 +79,7 @@ public class Gallery extends FragmentActivity {
 
         @Override
         public Fragment getItem(int position) {
-            return PageFragment.newInstance(position);
+            return PageFragment.newInstance(mImageUrls.get(position));
         }
     }
 }
